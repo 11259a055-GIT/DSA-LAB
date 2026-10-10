@@ -1,30 +1,68 @@
+#include <stdio.h>
+#include <ctype.h>
+
+#define MAX 100
+
+int stack[MAX];
+int top = -1;
+
+void push(int val)
+{
+    stack[++top] = val;
+}
+int pop()
+{
+    return stack[top--];
+}
+
 int main()
 {
-    int marks[50],studentCount;
+    char postfix[MAX];
+    int is_building_num = 0, current_num = 0, operand1, operand2, result;
 
-        printf("Enter number of students: ");
-    scanf("%d", &studentCount);
+    printf("Enter postfix expression (digits & operators, space separated): ");
+    fgets(postfix, MAX, stdin);
 
-    printf("Enter %d marks: ", studentCount);
-    for (int i = 0; i < studentCount; i++)
-        scanf("%d", &marks[i]);
-
-    printf("Marks List: ");
-    for (int i = 0; i < studentCount; i++)
+    for (int i = 0; postfix[i] != '\0'; i++)
     {
-        printf("%d ", marks[i]);
-        printf("\n");
+        char c = postfix[i];
+
+        if (isdigit(c))
+        {
+        
+            current_num = (current_num * 10) + (c - '0');
+            is_building_num = 1;
+        }
+        else if ((c == ' ' || c == '\n') && is_building_num == 1)
+        {
+            push(current_num);
+            current_num = 0;    
+            is_building_num = 0;
+        else if (c == '+' || c == '-' || c == '*' || c == '/')
+        {
+            operand2 = pop();
+            operand1 = pop();
+            switch (c)
+            {
+            case '+':
+                result = operand1 + operand2;
+                break;
+            case '-':
+                result = operand1 - operand2;
+                break;
+            case '*':
+                result = operand1 * operand2;
+                break;
+            case '/':
+                result = operand1 / operand2;
+                break;
+            default:
+                result = 0;
+            }
+            push(result);
+        }
     }
 
-    printf("Marks Array Base: ");
-    printf("%p ", (void *)&marks);
-    printf("\n");
-
-    printf("Marks Array Addresses: ");
-    for (int i = 0; i < studentCount; i++)
-    {
-        printf("%p ", (void *)&marks[i]);
-        printf("\n");
-    }
+    printf("Result of postfix evaluation = %d\n", pop());
     return 0;
 }
