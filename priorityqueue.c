@@ -1,30 +1,108 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 50
+
+int PQ[MAX];
+int FRONT = -1;
+int REAR = -1;
+
+void insert(int ITEM)
+{
+    if (REAR == MAX - 1)
+    {
+        printf("Queue Overflow\n");
+        return;
+    }
+
+    if (FRONT == -1)
+    {
+        FRONT = 0;
+    }
+
+    REAR = REAR + 1;
+    PQ[REAR] = ITEM;
+    printf("Inserted Item = %d\n", ITEM);
+}
+
+int findMax()
+{
+    if (FRONT == -1)
+    {
+        printf("Queue Underflow\n");
+        return -1;
+    }
+
+    int highestPriority = INT_MIN;
+    int INDEX = -1;
+
+    for (int i = FRONT; i <= REAR; i++)
+    {
+        if (PQ[i] > highestPriority)
+        {
+            highestPriority = PQ[i];
+            INDEX = i;
+        }
+    }
+
+    return INDEX;
+}
+
+void deleteItem()
+{
+    if (FRONT == -1)
+    {
+        printf("Queue Underflow\n");
+        return;
+    }
+
+    int INDEX = findMax();
+
+    if (INDEX == -1)
+        return;
+
+    int ITEM = PQ[INDEX];
+
+    for (int i = INDEX; i < REAR; i++)
+    {
+        PQ[i] = PQ[i + 1];
+    }
+
+    REAR = REAR - 1; 
+    if (REAR < FRONT)
+    {
+        FRONT = -1;
+        REAR = -1;
+    }
+
+    printf("Deleted Item = %d\n", ITEM);
+}
+
 int main()
 {
-    int marks[50],studentCount;
-
-        printf("Enter number of students: ");
-    scanf("%d", &studentCount);
-
-    printf("Enter %d marks: ", studentCount);
-    for (int i = 0; i < studentCount; i++)
-        scanf("%d", &marks[i]);
-
-    printf("Marks List: ");
-    for (int i = 0; i < studentCount; i++)
+    int choice, item;
+    do
     {
-        printf("%d ", marks[i]);
-        printf("\n");
-    }
+        printf("\n1.Insert 2.DeleteMax 3.Exit\nEnter choice: ");
+        scanf("%d", &choice);
 
-    printf("Marks Array Base: ");
-    printf("%p ", (void *)&marks);
-    printf("\n");
+        switch (choice)
+        {
+        case 1:
+            printf("Enter Item value (Priority): ");
+            scanf("%d", &item);
+            insert(item);
+            break;
+        case 2:
+            deleteItem();
+            break;
+        case 3:
+            printf("Exiting...\n");
+            break;
+        default:
+            printf("Invalid choice!\n");
+        }
+    } while (choice != 3);
 
-    printf("Marks Array Addresses: ");
-    for (int i = 0; i < studentCount; i++)
-    {
-        printf("%p ", (void *)&marks[i]);
-        printf("\n");
-    }
     return 0;
 }
